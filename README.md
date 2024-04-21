@@ -4,23 +4,15 @@ This package provides tools for processing and analyzing satellite imagery, util
 
 ## Installation
 
-To install the Remote Sensing Analysis package, follow these steps:
+1. **Download Package**:
 
-1. **Clone the Repository**:
+To install the Remote Sensing Analysis package, simply run the following command:
 
-   ```bash
-   git clone https://github.com/aiden200/Remote_Sensing_Analysis.git
-   cd Remote_Sensing_Analysis
-   ```
+```bash
+pip install Remote-Sensing-Analysis
+```
 
-2. **Install the Package**:
-   Use pip to install the package in editable mode, which is particularly useful for making changes to the code and testing.
-
-   ```bash
-   pip install -e .
-   ```
-
-3. **Download Model Weights**:
+2. **Download Model Weights**:
    The package requires specific model weights to function correctly. Download the model weights from the following Google Drive link:
    [Download Model Weights](https://drive.google.com/file/d/1KL3H-Fe1SVoCEFaO4KM4J_FMRF4ocoCz/view?usp=sharing)
 
