@@ -7,7 +7,7 @@ class ImageTextAnalytics:
     def __init__(self):
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
         self.text_model = AutoModel.from_pretrained("bert-base-uncased")
-        self.classifier = pipeline("zero-shot-classification")
+        self.classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
         self.summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
         self.sentence_model = SentenceTransformer('all-MiniLM-L6-v2')
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -31,7 +31,7 @@ class ImageTextAnalytics:
 
     def summarize(self, captions):
         text_to_summarize = " ".join(captions)
-        text_to_summarize = text_to_summarize[:300]  # Truncate to 300 characters to prevent overflow
+        text_to_summarize = text_to_summarize[:2000]  # Truncate to prevent overflow
         summary = self.summarizer(text_to_summarize, max_length=100, min_length=15, do_sample=False)
         return summary[0]['summary_text']
 
@@ -45,7 +45,8 @@ class ImageTextAnalytics:
         report += "\nEmbedding Similarity to Rocket Prep:\n"
         for i in range(len(known_phrases)):
             report += f"{known_phrases[i]}: {100 * float(embedding_similarity[0][i]):.2f}%\n"
-        return report
+        
+        return report, 100 * float(zs_classification['scores'][0])
 
 # Example usage:
 # analytics = ImageTextAnalytics()

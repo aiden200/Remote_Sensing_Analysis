@@ -1,0 +1,11 @@
+Description:
+ The aerial image contains multiple objects such as planes, vehicles (like trucks and cars), buildings or hangars for aviation purposes. The image contains an aerial view of several airplanes.
+Zero-shot Classification:
+non-preparatory activity: 96.53%
+rocket launch preparation: 3.47%
+
+Embedding Similarity to Rocket Prep:
+Rocket positioned on the launch pad for final countdown: 12.29%
+Final checks on the launch systems: 10.25%
+Lots of Activity in the Image: 39.17%
+Rocket being fueled: 10.44%

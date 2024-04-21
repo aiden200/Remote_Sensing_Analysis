@@ -1,6 +1,6 @@
-from generate_bounding_boxes import YOLOInference
-from create_text_from_image import ImageToTextConverter
-from compare_semantics import extract_semantics
+from src.Remote_Sensing_Analysis.YOLOInference import YOLOInference
+from src.Remote_Sensing_Analysis.ImageToTextConverter import ImageToTextConverter
+from src.Remote_Sensing_Analysis.ImageTextAnalytics import ImageTextAnalytics
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
@@ -15,6 +15,7 @@ class ImageProcessor:
     def __init__(self, model_weights_path="pretrained/YOLOv9_DOTA1_100EPOCHS.pt", confidence_threshold=0.1, output_folder="results"):
         self.ODM = YOLOInference(model_weights_path, output_folder, confidence_threshold=confidence_threshold)
         self.itt = ImageToTextConverter(model_type="CPM-V-2")
+        self.ita = ImageTextAnalytics()
         self.output_folder = output_folder
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
@@ -62,6 +63,13 @@ class ImageProcessor:
         patch_img.save(out)
 
         return out
+    
+    def inference(self, img):
+        if not os.path.exists("temp"):
+            os.mkdir("temp")
+
+        img.save("temp/inf.png") 
+        self.generate("temp/inf.png")
 
 
     def generate(self, image_path): 
@@ -96,15 +104,16 @@ class ImageProcessor:
             "Rocket being fueled"
         ]
 
-        report = extract_semantics(captions)
+        report, percentage = self.ita.extract_semantics(captions, known_phrases)
 
         with open(os.path.join(self.output_folder, "report.txt"), "w") as f:
             f.write(report)
 
-        self.generate_report(result_file, grid_img, report, self.output_folder)
-        return report
+        self.generate_report(result_file, grid_img, report)
+        return report, percentage
 
 def process_images_in_folder(base_path):
+    processor = ImageProcessor()
 
     for dirpath, dirnames, filenames in os.walk(base_path):
         for filename in tqdm(filenames):
@@ -114,9 +123,10 @@ def process_images_in_folder(base_path):
                     os.mkdir("report_folder")
                 
                 output_folder = os.path.join("report_folder", filename[:-4])
+                processor.output_folder = output_folder
+                processor.generate(image_path, output_folder, confidence_threshold=0.1)
 
-                generate(image_path, output_folder, confidence_threshold=0.1)
 
 
+# process_images_in_folder("data/maxar_test_data")
 
-process_images_in_folder("data/maxar_test_data")
