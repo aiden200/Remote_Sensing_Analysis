@@ -52,12 +52,14 @@ def test_image_processing():
     path = "path_to_your_test_image.jpg"
     im1 = Image.open(path)
     # Using .inference method
-    processor.inference(im1)
+    report, percentage = processor.inference(im1)
     # Or using .generate method directly with an image object
-    processor.generate(im1)
+    report, percentage = processor.generate(im1)
 
 if __name__ == "__main__":
     test_image_processing()
 ```
+
+The `report` object holds a comprehensive report on the image analysis. The `percentage` object indicates the likelihood of rocket preparation activities occurring. For additional information and data, please refer to the `output_folder` directory.
 
 Replace path_to_your_test_image.jpg with the path to the image file you wish to process.
