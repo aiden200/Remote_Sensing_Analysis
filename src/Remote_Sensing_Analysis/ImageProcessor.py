@@ -1,6 +1,6 @@
-from src.Remote_Sensing_Analysis.YOLOInference import YOLOInference
-from src.Remote_Sensing_Analysis.ImageToTextConverter import ImageToTextConverter
-from src.Remote_Sensing_Analysis.ImageTextAnalytics import ImageTextAnalytics
+from .YOLOInference import YOLOInference
+from .ImageToTextConverter import ImageToTextConverter
+from .ImageTextAnalytics import ImageTextAnalytics
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
@@ -12,11 +12,22 @@ import os
 
 
 class ImageProcessor:
-    def __init__(self, model_weights_path="pretrained/YOLOv9_DOTA1_100EPOCHS.pt", confidence_threshold=0.1, output_folder="results"):
+    def __init__(self, 
+                 model_weights_path="pretrained/YOLOv9_DOTA1_100EPOCHS.pt", 
+                 confidence_threshold=0.1, 
+                 output_folder="results", 
+                 known_phrases = [
+                        "Rocket positioned on the launch pad for final countdown",
+                        "Final checks on the launch systems",
+                        "Lots of Activity in the Image",
+                        "Rocket being fueled"
+                    ]
+                 ):
         self.ODM = YOLOInference(model_weights_path, output_folder, confidence_threshold=confidence_threshold)
         self.itt = ImageToTextConverter(model_type="CPM-V-2")
         self.ita = ImageTextAnalytics()
         self.output_folder = output_folder
+        self.known_phrases = known_phrases
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
         
@@ -69,7 +80,7 @@ class ImageProcessor:
             os.mkdir("temp")
 
         img.save("temp/inf.png") 
-        self.generate("temp/inf.png")
+        return self.generate("temp/inf.png")
 
 
     def generate(self, image_path): 
@@ -94,15 +105,10 @@ class ImageProcessor:
             ax.axis('off')
 
         plt.tight_layout()
-        grid_img = os.path.join(self.output_folder, 'my_plot.png')
+        grid_img = os.path.join(self.output_folder, 'object_captions.png')
         plt.savefig(grid_img, dpi=300)
 
-        known_phrases = [
-            "Rocket positioned on the launch pad for final countdown",
-            "Final checks on the launch systems",
-            "Lots of Activity in the Image",
-            "Rocket being fueled"
-        ]
+        known_phrases = self.known_phrases
 
         report, percentage = self.ita.extract_semantics(captions, known_phrases)
 

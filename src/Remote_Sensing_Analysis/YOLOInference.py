@@ -22,7 +22,7 @@ class YOLOInference:
         img = Image.open(image_path)
         width, height = img.size
 
-        result_file = os.path.join(self.output_folder, 'result.jpg')
+        result_file = os.path.join(self.output_folder, 'img_with_boxes.jpg')
         for result in results:
             for index, box in enumerate(result.boxes.xyxy):
                 if result.boxes.conf[index] < self.confidence_threshold:
